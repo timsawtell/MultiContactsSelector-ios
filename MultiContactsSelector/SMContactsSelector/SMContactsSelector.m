@@ -212,10 +212,17 @@
         
 		[propertyArray release];
         
+        
+        
 		CFStringRef name;
         name = ABRecordCopyValue(person, kABPersonFirstNameProperty);
         CFStringRef lastNameString;
         lastNameString = ABRecordCopyValue(person, kABPersonLastNameProperty);
+        
+        if (name == nil && lastNameString == nil) {
+            continue;
+        }
+        
         CFStringRef emailString;
         emailString = ABRecordCopyValue(person, kABPersonEmailProperty);
         
