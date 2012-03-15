@@ -94,7 +94,7 @@
 
 - (BOOL)isLetter
 {
-	NSArray *letters = [NSArray spanishAlphabet]; //replace by your alphabet
+	NSArray *letters = [NSArray englishAlphabet]; //replace by your alphabet
 	BOOL isLetter = NO;
 	
 	for (int i = 0; i < [letters count]; i++)
@@ -220,7 +220,8 @@
         emailString = ABRecordCopyValue(person, kABPersonEmailProperty);
         
 		NSString *nameString = (NSString *)name;
-		NSString *lastName = (NSString *)lastNameString;
+		NSString *lastName = lastNameString == nil ? nameString : (NSString *)lastNameString;
+
         int currentID = (int)ABRecordGetRecordID(person);
         
         if ((id)lastNameString != nil)
@@ -229,8 +230,9 @@
         }
         
         NSMutableDictionary *info = [NSMutableDictionary new];
-        [info setValue:[NSString stringWithFormat:@"%@", [[nameString stringByReplacingOccurrencesOfString:@" " withString:@""] substringToIndex:1]] forKey:@"letter"];
+        [info setValue:[NSString stringWithFormat:@"%@", [[lastName stringByReplacingOccurrencesOfString:@" " withString:@""] substringToIndex:1]] forKey:@"letter"];
         [info setValue:[NSString stringWithFormat:@"%@", nameString] forKey:@"name"];
+        [info setValue:lastName forKey:@"lastName"];
         [info setValue:@"-1" forKey:@"rowSelected"];
         
         if ((objs != @"") || ([[objs lowercaseString] rangeOfString:@"null"].location == NSNotFound))
@@ -292,7 +294,7 @@
 	CFRelease(addressBook);
     
 	NSSortDescriptor *sortDescriptor;
-	sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"name"
+	sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"lastName"
 												  ascending:YES] autorelease];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
 	data = [[dataArray sortedArrayUsingDescriptors:sortDescriptors] retain];
@@ -316,7 +318,7 @@
 		
 		for (NSDictionary *dict in data)
 		{
-			NSString *name = [dict valueForKey:@"name"];
+			NSString *name = [dict valueForKey:@"lastName"];
 			name = [name stringByReplacingOccurrencesOfString:@" " withString:@""];
 			
 			if ([[[name substringToIndex:1] uppercaseString] isEqualToString:[arrayLetters objectAtIndex:i]]) 
@@ -335,7 +337,7 @@
 		
 		for (NSDictionary *dict in data)
 		{
-			NSString *name = [dict valueForKey:@"name"];
+			NSString *name = [dict valueForKey:@"lastName"];
 			name = [name stringByReplacingOccurrencesOfString:@" " withString:@""];
 			
 			if ((![name isLetter]) && (![name containsNullString]))
@@ -625,7 +627,7 @@
     
 	for (NSDictionary *dict in array)
 	{
-		NSString *name = [dict valueForKey:@"name"];
+		NSString *name = [dict valueForKey:@"lastName"];
 		name = [name stringByReplacingOccurrencesOfString:@" " withString:@""];
 		
 		if (![name isLetter]) 
@@ -770,7 +772,7 @@
 		{
 			NSMutableDictionary *item = (NSMutableDictionary *)[obj objectAtIndex:x];
 			
-			NSString *name = [[item valueForKey:@"name"] lowercaseString];
+			NSString *name = [[item valueForKey:@"lastName"] lowercaseString];
 			name = [name stringByReplacingOccurrencesOfString:@" " withString:@""];
 			
 			NSComparisonResult result = [name compare:[searchText lowercaseString] options:(NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch) range:NSMakeRange(0, [searchText length])];
