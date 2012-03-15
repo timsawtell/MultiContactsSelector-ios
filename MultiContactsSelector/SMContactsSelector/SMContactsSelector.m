@@ -219,13 +219,12 @@
         CFStringRef emailString;
         emailString = ABRecordCopyValue(person, kABPersonEmailProperty);
         
-		NSString *nameString = (NSString *)name;
+		NSString *nameString = name == nil ? @"" : (NSString *)name;
 		NSString *lastName = lastNameString == nil ? nameString : (NSString *)lastNameString;
 
         int currentID = (int)ABRecordGetRecordID(person);
         
-        if ((id)lastNameString != nil)
-        {
+        if ((id)lastNameString != nil) {
             nameString = [NSString stringWithFormat:@"%@ %@", nameString, lastName];
         }
         
