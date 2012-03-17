@@ -27,7 +27,8 @@
         if (currentID == recordID) 
             break;
     }
-
+    CFRelease(addressBook);
+    CFRelease(allPeople);
     return person;
 }
 
@@ -47,7 +48,9 @@
         
         [items addObject:[NSNumber numberWithInt:recordID]];
     }
-    
+    CFRelease(addressBook);
+    CFRelease(allPeople);
+    [items release];
     return (NSArray *)items;
 }
 
