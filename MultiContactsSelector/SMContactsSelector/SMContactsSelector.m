@@ -470,7 +470,7 @@
 	[item setObject:cell forKey:@"cell"];
 	
 	BOOL checked = [[item objectForKey:@"checked"] boolValue];
-	UIImage *image = (checked) ? [UIImage imageNamed:@"checked.png"] : [UIImage imageNamed:@"unchecked.png"];
+	UIImage *image = (checked) ? [Appearances greenTickImage] : [Appearances uncheckedImage];
 	
 	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 	CGRect frame = CGRectMake(0.0, 0.0, image.size.width, image.size.height);
