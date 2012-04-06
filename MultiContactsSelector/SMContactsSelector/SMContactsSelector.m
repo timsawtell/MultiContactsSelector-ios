@@ -553,7 +553,7 @@
         UITableViewCell *cell = [item objectForKey:@"cell"];
         UIButton *button = (UIButton *)cell.accessoryView;
         
-        UIImage *newImage = (checked) ? [UIImage imageNamed:@"unchecked.png"] : [UIImage imageNamed:@"checked.png"];
+        UIImage *newImage = (checked) ? [Appearances uncheckedImage] : [Appearances greenTickImage];
         [button setBackgroundImage:newImage forState:UIControlStateNormal];
         
         if (tableView == self.searchDisplayController.searchResultsTableView)
