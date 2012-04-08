@@ -185,35 +185,35 @@
 	ABAddressBookRef addressBook = ABAddressBookCreate( );
 	CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople( addressBook );
 	CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
-	dataArray = [NSMutableArray new];
+	NSMutableArray *tmpDataArray = [[NSMutableArray new] autorelease];
 	
 	for (int i = 0; i < nPeople; i++)
 	{
 		ABRecordRef person = CFArrayGetValueAtIndex(allPeople, i);
-		ABMultiValueRef property = ABRecordCopyValue(person, (requestData == DATA_CONTACT_TELEPHONE) ? kABPersonPhoneProperty : kABPersonEmailProperty);
-        
-		NSArray *propertyArray = (NSArray *)ABMultiValueCopyArrayOfAllValues(property);
-		CFRelease(property);
-        
-		NSString *objs = @"";
+		ABMultiValueRef property;
+        property = ABRecordCopyValue(person, (requestData == DATA_CONTACT_TELEPHONE) ? kABPersonPhoneProperty : kABPersonEmailProperty);
+		CFArrayRef propertyArray;
+        if (property) {
+            propertyArray = ABMultiValueCopyArrayOfAllValues(property);
+            CFRelease(property);
+        } 
+        NSString *objs = @"";
         BOOL lotsItems = NO;
-		for (int i = 0; i < [propertyArray count]; i++)
-		{
-			if (objs == @"") 
-			{
-				objs = [propertyArray objectAtIndex:i];
-			}
-			else 
-			{
-                lotsItems = YES;
-				objs = [objs stringByAppendingString:[NSString stringWithFormat:@",%@", [propertyArray objectAtIndex:i]]];
-			}
-		}
-        
-		[propertyArray release];
-        
-        
-        
+        if (propertyArray) {
+            for (int i = 0; i < CFArrayGetCount(propertyArray); i++)
+            {
+                if (objs == @"") 
+                {
+                    objs = CFArrayGetValueAtIndex(propertyArray,i);
+                }
+                else 
+                {
+                    lotsItems = YES;
+                    objs = [objs stringByAppendingString:[NSString stringWithFormat:@",%@", CFArrayGetValueAtIndex(propertyArray,i)]];
+                }
+            }
+            CFRelease(propertyArray);
+        }
 		CFStringRef name;
         name = ABRecordCopyValue(person, kABPersonFirstNameProperty);
         CFStringRef lastNameString;
@@ -285,11 +285,11 @@
             
             if (insert)
             {
-                [dataArray addObject:info];
+                [tmpDataArray addObject:info];
             }
         }
         else
-            [dataArray addObject:info];
+            [tmpDataArray addObject:info];
         
         [info release];
         if (name) CFRelease(name);
@@ -303,7 +303,7 @@
 	sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"lastName"
 												  ascending:YES] autorelease];
 	NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
-	data = [[dataArray sortedArrayUsingDescriptors:sortDescriptors] retain];
+	data = [[tmpDataArray sortedArrayUsingDescriptors:sortDescriptors] retain];
 	
     if (self.savedSearchTerm)
 	{
