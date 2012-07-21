@@ -418,11 +418,14 @@
     
     
 	[objects release];
-	[self dismiss];
+	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)dismiss
 {
+    if ([self.delegate respondsToSelector:@selector(cancelledSMContactImport)]) 
+        [self.delegate cancelledSMContactImport];
+    
 	[self dismissModalViewControllerAnimated:YES];
 }
 
